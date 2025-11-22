@@ -9,7 +9,7 @@ const contactRoutes = require('./routes/contactRoutes');
 // Load environment variables from .env file
 dotenv.config();
 
-// --- CORRECT ROUTE IMPORTS ---
+// --- ROUTE IMPORTS ---
 const authRoutes = require('./routes/authRoutes');
 const courseRoutes = require('./routes/courseRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -21,33 +21,35 @@ const app = express();
 
 // --- UPDATED CORS CONFIGURATION ---
 if (process.env.NODE_ENV === 'production') {
-  const corsEnv = process.env.CORS_ALLOWED_ORIGINS || '';
-  const allowedOrigins = corsEnv.split(',').map(s => s.trim()).filter(Boolean);
-
-  // 1. Define your Vercel URL explicitly (No trailing slash!)
-  const mainFrontendUrl = 'https://e-learning-platform-gules.vercel.app';
-
-  // 2. Ensure it is always in the allowed list
-  if (!allowedOrigins.includes(mainFrontendUrl)) {
-    allowedOrigins.push(mainFrontendUrl);
-  }
-
-  // 3. Log the allowed origins so you can check Render logs if it fails
-  console.log('CORS Configured. Allowed Origins:', allowedOrigins);
-
   app.use(cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, server-to-server, curl, etc.)
+      // 1. Allow requests with no origin (mobile apps, curl, Postman, etc.)
       if (!origin) return callback(null, true);
-      
-      if (allowedOrigins.indexOf(origin) === -1) {
-        // Returns a specific error message to help debug
-        const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
-        return callback(new Error(msg), false);
+
+      // 2. Define allowed static origins (your main production domain)
+      const allowedOrigins = [
+        'https://e-learning-platform-gules.vercel.app' 
+      ];
+
+      // 3. Check if origin is in the static list
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
-      return callback(null, true);
+
+      // 4. DYNAMIC CHECK: Allow any Vercel preview URL for your project
+      // This Regex matches any URL starting with "https://e-learning-platform-" and ending with ".vercel.app"
+      const isVercelPreview = /^https:\/\/e-learning-platform-.*\.vercel\.app$/.test(origin);
+      
+      if (isVercelPreview) {
+        return callback(null, true);
+      }
+
+      // 5. Reject everything else
+      console.log('Blocked by CORS:', origin); // Logs the blocked URL to Render logs for debugging
+      const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+      return callback(new Error(msg), false);
     },
-    credentials: true // Required for cookies/sessions to work across domains
+    credentials: true // Required for cookies/sessions
   }));
 } else {
   // Development: allow all origins to make local dev easier
