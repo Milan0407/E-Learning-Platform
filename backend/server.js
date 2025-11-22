@@ -20,13 +20,24 @@ const debugRoutes = require('./routes/debugRoutes');
 // Initialize Express app
 const app = express();
 
-// CORS Configuration: allow dev origins or all in development for convenience
+// CORS Configuration: allow dev origins or configurable production origins
 if (process.env.NODE_ENV === 'production') {
-  const allowedOrigins = [
-    'https://coer-hacathon.onrender.com'
-  ];
+  // Read allowed origins from env var (comma-separated). Example:
+  // CORS_ALLOWED_ORIGINS=https://app.vercel.app,https://admin.example.com
+  const corsEnv = process.env.CORS_ALLOWED_ORIGINS || '';
+  const allowedOrigins = corsEnv
+    .split(',')
+    .map(s => s.trim())
+    .filter(Boolean);
+
+  // Fallback to the original default if none provided
+  if (allowedOrigins.length === 0) {
+    allowedOrigins.push('https://coer-hacathon.onrender.com');
+  }
+
   app.use(cors({
     origin: (origin, callback) => {
+      // Allow requests with no origin (mobile apps, server-to-server, curl, etc.)
       if (!origin) return callback(null, true);
       if (allowedOrigins.indexOf(origin) === -1) {
         return callback(new Error('The CORS policy for this site does not allow access from the specified Origin.'), false);
@@ -76,6 +87,11 @@ app.use('/api/contact', contactRoutes);
 if (process.env.NODE_ENV !== 'production') {
   app.use('/api/_debug', debugRoutes);
 }
+
+// Health endpoint for quick checks
+app.get('/api/_health', (req, res) => {
+  res.json({ status: 'ok', time: new Date().toISOString() });
+});
 
 // Define the port
 const PORT = process.env.PORT || 5000;
