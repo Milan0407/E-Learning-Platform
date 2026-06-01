@@ -19,38 +19,38 @@ const debugRoutes = require('./routes/debugRoutes');
 // Initialize Express app
 const app = express();
 
+const allowedOrigins = [
+  'https://e-learning-platform-gules.vercel.app',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  ...(process.env.FRONTEND_URL ? process.env.FRONTEND_URL.split(',').map(origin => origin.trim()) : [])
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, curl, Postman, etc.)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    // Allow any Vercel preview URL for this project.
+    const isVercelPreview = /^https:\/\/e-learning-platform-.*\.vercel\.app$/.test(origin);
+    if (isVercelPreview) {
+      return callback(null, true);
+    }
+
+    console.log('Blocked by CORS:', origin);
+    const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+    return callback(new Error(msg), false);
+  },
+  credentials: true
+};
+
 // --- UPDATED CORS CONFIGURATION ---
 if (process.env.NODE_ENV === 'production') {
-  app.use(cors({
-    origin: (origin, callback) => {
-      // 1. Allow requests with no origin (mobile apps, curl, Postman, etc.)
-      if (!origin) return callback(null, true);
-
-      // 2. Define allowed static origins (your main production domain)
-      const allowedOrigins = [
-        'https://e-learning-platform-gules.vercel.app' 
-      ];
-
-      // 3. Check if origin is in the static list
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      // 4. DYNAMIC CHECK: Allow any Vercel preview URL for your project
-      // This Regex matches any URL starting with "https://e-learning-platform-" and ending with ".vercel.app"
-      const isVercelPreview = /^https:\/\/e-learning-platform-.*\.vercel\.app$/.test(origin);
-      
-      if (isVercelPreview) {
-        return callback(null, true);
-      }
-
-      // 5. Reject everything else
-      console.log('Blocked by CORS:', origin); // Logs the blocked URL to Render logs for debugging
-      const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
-      return callback(new Error(msg), false);
-    },
-    credentials: true // Required for cookies/sessions
-  }));
+  app.use(cors(corsOptions));
 } else {
   // Development: allow all origins to make local dev easier
   app.use(cors());
