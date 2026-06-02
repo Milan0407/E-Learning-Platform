@@ -1,86 +1,258 @@
+const FooterStyles = () => `
+  <style>
+    .site-footer {
+      margin-top: 80px;
+      border-top: 1px solid rgba(15, 23, 42, 0.08);
+      background:
+        radial-gradient(circle at 8% 10%, rgba(64, 97, 161, 0.10), transparent 24%),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      color: #111827;
+    }
+
+    .footer-container {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 54px 0 26px;
+    }
+
+    .footer-main {
+      display: grid;
+      grid-template-columns: minmax(280px, 1.35fr) repeat(3, minmax(150px, 0.65fr));
+      gap: 36px;
+      align-items: start;
+    }
+
+    .footer-brand {
+      max-width: 440px;
+    }
+
+    .footer-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: #101827;
+      text-decoration: none;
+    }
+
+    .footer-logo-mark {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      background: #4061a1;
+      color: #ffffff;
+      box-shadow: 0 16px 32px rgba(64, 97, 161, 0.18);
+    }
+
+    .footer-logo-mark svg {
+      width: 23px;
+      height: 23px;
+    }
+
+    .footer-logo-text strong {
+      display: block;
+      color: #101827;
+      font-size: 19px;
+      line-height: 1.15;
+      font-weight: 900;
+    }
+
+    .footer-logo-text span {
+      display: block;
+      margin-top: 3px;
+      color: #64748b;
+      font-size: 11px;
+      line-height: 1.2;
+      font-weight: 850;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .footer-description {
+      margin-top: 20px;
+      color: #475569;
+      font-size: 15px;
+      line-height: 1.8;
+    }
+
+    .footer-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-top: 22px;
+      border: 1px solid #dbe3ef;
+      border-radius: 999px;
+      background: #ffffff;
+      padding: 9px 13px;
+      color: #334155;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
+    }
+
+    .footer-status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #16a34a;
+      box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.12);
+    }
+
+    .footer-column h3 {
+      color: #111827;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+    }
+
+    .footer-links {
+      display: grid;
+      gap: 12px;
+      margin-top: 16px;
+      padding: 0;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.5;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-links a:hover {
+      color: #4061a1;
+    }
+
+    .footer-note {
+      border-top: 1px solid rgba(15, 23, 42, 0.08);
+      margin-top: 42px;
+      padding-top: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      color: #64748b;
+      font-size: 13px;
+      line-height: 1.6;
+      font-weight: 650;
+    }
+
+    .footer-note-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-note-links a {
+      color: #64748b;
+      text-decoration: none;
+      font-weight: 750;
+    }
+
+    .footer-note-links a:hover {
+      color: #4061a1;
+    }
+
+    @media (max-width: 920px) {
+      .footer-main {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .footer-brand {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .site-footer {
+        margin-top: 56px;
+      }
+
+      .footer-container {
+        width: min(100% - 28px, 1180px);
+        padding-top: 42px;
+      }
+
+      .footer-main {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      .footer-note {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
+`;
+
 export const Footer = () => {
+  const year = new Date().getFullYear();
+
   return `
-    <footer class="relative mt-20">
-      <!-- Background Elements -->
-      <div class="absolute inset-0 -z-10">
-        <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float"></div>
-        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-float" style="animation-delay: 2s;"></div>
-      </div>
-      
-      <div class="glass border-t border-white/20">
-        <div class="mx-auto max-w-7xl px-6 py-16 lg:px-8">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <!-- Brand Section -->
-            <div class="md:col-span-2">
-              <div class="flex items-center space-x-3 mb-6">
-                <div class="w-10 h-10 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center">
-                  <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-5.747-5.747h11.494"></path>
-                  </svg>
-                </div>
-                <span class="text-2xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
-                  Shiksha Jyoti
-                </span>
-              </div>
-              <p class="text-gray-600 mb-6 max-w-md">
-                Bringing the light of quality digital education to rural India. Empowering students and teachers with the skills for a modern world.
-              </p>
-              <div class="flex space-x-4">
-                <a href="#" class="w-10 h-10 bg-gradient-to-r from-primary-500 to-primary-600 rounded-lg flex items-center justify-center hover:scale-110 transition-transform duration-300">
-                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-                  </svg>
-                </a>
-                <a href="#" class="w-10 h-10 bg-gradient-to-r from-secondary-500 to-secondary-600 rounded-lg flex items-center justify-center hover:scale-110 transition-transform duration-300">
-                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M22.46 6c-.77.35-1.6.58-2.46.69.88-.53 1.56-1.37 1.88-2.38-.83.5-1.75.85-2.72 1.05C18.37 4.5 17.26 4 16 4c-2.35 0-4.27 1.92-4.27 4.29 0 .34.04.67.11.98C8.28 9.09 5.11 7.38 3 4.79c-.37.63-.58 1.37-.58 2.15 0 1.49.75 2.81 1.91 3.56-.71 0-1.37-.2-1.95-.5v.03c0 2.08 1.48 3.82 3.44 4.21a4.22 4.22 0 0 1-1.93.07 4.28 4.28 0 0 0 4 2.98 8.521 8.521 0 0 1-5.33 1.84c-.34 0-.68-.02-1.02-.06C3.44 20.29 5.7 21 8.12 21 16 21 20.33 14.46 20.33 8.79c0-.19 0-.37-.01-.56.84-.6 1.56-1.36 2.14-2.23z"/>
-                  </svg>
-                </a>
-                <a href="#" class="w-10 h-10 bg-gradient-to-r from-accent-500 to-accent-600 rounded-lg flex items-center justify-center hover:scale-110 transition-transform duration-300">
-                  <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                  </svg>
-                </a>
-              </div>
-            </div>
-            
-            <!-- Quick Links -->
-            <div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">Quick Links</h3>
-              <ul class="space-y-3">
-                <li><a href="/courses" data-link class="text-gray-600 hover:text-primary-600 transition-colors duration-300">Browse Courses</a></li>
-                <li><a href="/login" data-link class="text-gray-600 hover:text-primary-600 transition-colors duration-300">Sign In</a></li>
-                <li><a href="/register" data-link class="text-gray-600 hover:text-primary-600 transition-colors duration-300">Sign Up</a></li>
-                <li><a href="#" class="text-gray-600 hover:text-primary-600 transition-colors duration-300">About Us</a></li>
-              </ul>
-            </div>
-            
-            <!-- Support -->
-            <div>
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">Support</h3>
-              <ul class="space-y-3">
-                <li><a href="#" class="text-gray-600 hover:text-primary-600 transition-colors duration-300">Help Center</a></li>
-                <li><a href="#" class="text-gray-600 hover:text-primary-600 transition-colors duration-300">Contact Us</a></li>
-                <li><a href="#" class="text-gray-600 hover:text-primary-600 transition-colors duration-300">Privacy Policy</a></li>
-                <li><a href="#" class="text-gray-600 hover:text-primary-600 transition-colors duration-300">Terms of Service</a></li>
-              </ul>
+    ${FooterStyles()}
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-main">
+          <div class="footer-brand">
+            <a href="/" data-link class="footer-logo" aria-label="Shiksha Jyoti home">
+              <span class="footer-logo-mark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19.5A2.5 2.5 0 016.5 17H20V5H6.5A2.5 2.5 0 004 7.5v12zm0-12.5l8 4.5 8-4.5" />
+                </svg>
+              </span>
+              <span class="footer-logo-text">
+                <strong>Shiksha Jyoti</strong>
+                <span>Digital Education</span>
+              </span>
+            </a>
+            <p class="footer-description">
+              A focused learning platform for students, teachers, and administrators who need simple access to digital courses and video lessons.
+            </p>
+            <div class="footer-status">
+              <span class="footer-status-dot"></span>
+              Platform available for learning
             </div>
           </div>
-          
-          <!-- Bottom Section -->
-          <div class="mt-12 pt-8 border-t border-gray-200">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-              <p class="text-gray-500 text-sm">
-          &copy; ${new Date().getFullYear()} Shiksha Jyoti. All rights reserved.
-        </p>
-              <div class="mt-4 md:mt-0 flex items-center space-x-6">
-                <span class="text-sm text-gray-500">Made with ❤️ for education</span>
-                <div class="flex items-center space-x-2">
-                  <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span class="text-sm text-gray-500">All systems operational</span>
-                </div>
-              </div>
-            </div>
+
+          <div class="footer-column">
+            <h3>Platform</h3>
+            <ul class="footer-links">
+              <li><a href="/courses" data-link>Browse courses</a></li>
+              <li><a href="/register" data-link>Student signup</a></li>
+              <li><a href="/login" data-link>Sign in</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h3>Workspaces</h3>
+            <ul class="footer-links">
+              <li><a href="/dashboard" data-link>Student dashboard</a></li>
+              <li><a href="/teacher-dashboard" data-link>Teacher dashboard</a></li>
+              <li><a href="/admin" data-link>Admin portal</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-column">
+            <h3>Support</h3>
+            <ul class="footer-links">
+              <li><a href="/contact" data-link>Contact</a></li>
+              <li><a href="/courses" data-link>Course catalog</a></li>
+              <li><a href="/login" data-link>Account access</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-note">
+          <p>&copy; ${year} Shiksha Jyoti. All rights reserved.</p>
+          <div class="footer-note-links">
+            <a href="/contact" data-link>Help</a>
+            <a href="/courses" data-link>Courses</a>
           </div>
         </div>
       </div>
@@ -88,11 +260,9 @@ export const Footer = () => {
   `;
 };
 
-// This is the function that was missing
 export const updateFooter = () => {
     const footerContainer = document.querySelector('#footer-container');
     if (footerContainer) {
         footerContainer.innerHTML = Footer();
     }
 };
-

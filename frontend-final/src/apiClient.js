@@ -6,9 +6,6 @@ const baseURL = rawBase.replace(/\/$/, ''); // remove trailing slash
 
 const apiClient = axios.create({
     baseURL, // Fallback for local dev
-    headers: {
-        'Content-Type': 'application/json',
-    },
 });
 
 // This interceptor adds the auth token to every request

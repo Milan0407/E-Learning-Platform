@@ -1,4 +1,4 @@
-import './style.css'; // Or your output.css, depending on setup
+import './output.css';
 import { router } from './router';
 import { navigateTo } from './utils/navigation';
 import { updateNavbar } from './components/Navbar';
@@ -56,6 +56,7 @@ const handleNavigationClick = (e) => {
 
 // Listen for browser's back/forward buttons
 window.addEventListener('popstate', router);
+window.addEventListener('app:navigate', router);
 
 // When the page first loads...
 document.addEventListener('DOMContentLoaded', () => {

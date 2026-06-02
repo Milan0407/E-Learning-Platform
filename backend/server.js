@@ -9,6 +9,13 @@ const contactRoutes = require('./routes/contactRoutes');
 // Load environment variables from .env file
 dotenv.config();
 
+const requiredEnv = ['MONGO_URI', 'JWT_SECRET'];
+const missingEnv = requiredEnv.filter((key) => !process.env[key]);
+if (missingEnv.length > 0) {
+  console.error('Missing required environment variables:', missingEnv.join(', '));
+  process.exit(1);
+}
+
 // --- ROUTE IMPORTS ---
 const authRoutes = require('./routes/authRoutes');
 const courseRoutes = require('./routes/courseRoutes');
@@ -79,7 +86,8 @@ mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected successfully.'))
   .catch(err => {
     console.error('MongoDB connection error:', err);
-    console.warn('Continuing without database connection for development purposes.');
+    console.error('Unable to connect to MongoDB. Shutting down.');
+    process.exit(1);
   });
 
 // API Routes

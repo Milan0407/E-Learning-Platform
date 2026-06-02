@@ -11,6 +11,7 @@ import { renderPage } from './utils/renderer';
 import { updateNavbar } from './components/Navbar';
 import { updateFooter } from './components/Footer';
 import { ContactPage, initContactPage } from './pages/ContactPage';
+import { getUser } from './auth';
 
 // Define your application's routes
 const routes = {
@@ -20,10 +21,10 @@ const routes = {
     '/courses': { component: CoursesPage, init: initCoursesPage },
     '/courses/:id': { component: CourseDetailsPage, init: initCourseDetailsPage, isPrivate: true },
     '/dashboard': { component: DashboardPage, init: initDashboardPage, isPrivate: true },
-    '/teacher-dashboard': { component: TeacherDashboardPage, init: initTeacherDashboardPage, isPrivate: true },
-    '/teacher/course/:id': { component: ManageCoursePage, init: initManageCoursePage, isPrivate: true }, // Add the new route
-    '/contact': { component: ContactPage,init: initContactPage },
-    '/admin': { component: AdminPage, init: initAdminPage, isPrivate: true },
+    '/teacher-dashboard': { component: TeacherDashboardPage, init: initTeacherDashboardPage, isPrivate: true, requiredRole: 'teacher' },
+    '/teacher/course/:id': { component: ManageCoursePage, init: initManageCoursePage, isPrivate: true, requiredRole: 'teacher' },
+    '/contact': { component: ContactPage, init: initContactPage },
+    '/admin': { component: AdminPage, init: initAdminPage, isPrivate: true, requiredRole: 'admin' },
 };
 
 export const navigateTo = (url) => {
@@ -34,6 +35,8 @@ export const navigateTo = (url) => {
 export const router = async () => {
     const path = window.location.pathname;
     console.log('Router called with path:', path);
+
+    const user = getUser();
 
     // Handle dynamic routes like /courses/:id
     let match = null;
@@ -55,6 +58,25 @@ export const router = async () => {
         // Handle 404 - Not Found
         console.log('No route matched, using 404 page');
         match = { route: { component: () => `<h1>404 - Page Not Found</h1>` } };
+    }
+
+    const requiredRole = match.route?.requiredRole;
+    if (match.route?.isPrivate && !user) {
+        console.log('Route is private and user is not authenticated, redirecting to /login');
+        navigateTo('/login');
+        return;
+    }
+
+    if (requiredRole && (!user || user.role !== requiredRole)) {
+        console.log(`User does not have the required role ${requiredRole} for this route`, user);
+        if (!user) {
+            navigateTo('/login');
+        } else if (user.role === 'teacher') {
+            navigateTo('/teacher-dashboard');
+        } else {
+            navigateTo('/dashboard');
+        }
+        return;
     }
 
     console.log('Rendering page:', match.route);

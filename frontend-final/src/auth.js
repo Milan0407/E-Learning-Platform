@@ -36,17 +36,12 @@ export async function handleLogin(email, password) {
     }
 }
 
-export async function handleRegister(name, email, password, role) {
+export async function handleRegister(name, email, password) {
     try {
-        const response = await apiClient.post('/auth/register', { name, email, password, role });
+        const response = await apiClient.post('/auth/register', { name, email, password });
         localStorage.setItem('token', response.data.token);
 
-        // After registration, check user role and redirect
-        if (role === 'teacher') {
-            navigateTo('/teacher-dashboard');
-        } else {
-            navigateTo('/dashboard');
-        }
+        navigateTo('/dashboard');
 
         // Dispatch the auth-change event
         window.dispatchEvent(new CustomEvent('auth-change'));

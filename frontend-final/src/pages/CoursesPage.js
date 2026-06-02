@@ -1,84 +1,340 @@
 import apiClient from '../apiClient';
 import { CourseCard } from '../components/CourseCard';
 
+const CoursesStyles = () => `
+  <style>
+    .courses-page {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(64, 97, 161, 0.08), transparent 24%),
+        radial-gradient(circle at 90% 8%, rgba(214, 139, 26, 0.07), transparent 22%),
+        linear-gradient(180deg, #fbfcff 0%, #ffffff 52%, #f7f8fb 100%);
+      padding: 24px 0 52px;
+    }
+
+    .courses-shell {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .courses-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      align-items: stretch;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .courses-hero-main,
+    .courses-hero-side,
+    .courses-toolbar,
+    .courses-panel {
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+    }
+
+    .courses-hero-main {
+      background:
+        linear-gradient(135deg, #ffffff 0%, #f8fafc 64%),
+        radial-gradient(circle at 88% 18%, rgba(64, 97, 161, 0.10), transparent 28%);
+      padding: 26px 28px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .courses-hero-main::after {
+      content: '';
+      position: absolute;
+      right: 22px;
+      top: 24px;
+      width: 76px;
+      height: 76px;
+      border-radius: 22px;
+      background: rgba(64, 97, 161, 0.08);
+      transform: rotate(10deg);
+    }
+
+    .courses-eyebrow {
+      color: #4061a1;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .courses-title {
+      position: relative;
+      z-index: 1;
+      max-width: 760px;
+      margin-top: 8px;
+      color: #111827;
+      font-size: clamp(30px, 3.6vw, 44px);
+      line-height: 1.1;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .courses-subtitle {
+      position: relative;
+      z-index: 1;
+      max-width: 720px;
+      margin-top: 14px;
+      color: #64748b;
+      font-size: 15px;
+      line-height: 1.75;
+    }
+
+    .courses-hero-side {
+      background: linear-gradient(135deg, #4061a1 0%, #334b84 100%);
+      padding: 22px;
+      color: #ffffff;
+      box-shadow: 0 16px 40px rgba(64, 97, 161, 0.16);
+    }
+
+    .courses-side-label {
+      color: rgba(255, 255, 255, 0.80);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+    }
+
+    .courses-side-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .courses-side-stat {
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.12);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .courses-side-stat strong {
+      display: block;
+      color: #ffffff;
+      font-size: 24px;
+      line-height: 1;
+      font-weight: 900;
+    }
+
+    .courses-side-stat span {
+      display: block;
+      margin-top: 8px;
+      color: rgba(255, 255, 255, 0.80);
+      font-size: 11px;
+      line-height: 1.4;
+      font-weight: 850;
+    }
+
+    .courses-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      padding: 16px 18px;
+    }
+
+    .courses-search {
+      position: relative;
+      width: min(480px, 100%);
+    }
+
+    .courses-search input {
+      width: 100%;
+      min-height: 48px;
+      border: 1px solid #dbe3ef;
+      border-radius: 13px;
+      background: #f8fafc;
+      padding: 0 44px 0 14px;
+      color: #111827;
+      font-size: 14px;
+      font-weight: 650;
+      outline: none;
+    }
+
+    .courses-search input:focus {
+      border-color: rgba(64, 97, 161, 0.55);
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(64, 97, 161, 0.10);
+    }
+
+    .courses-search svg {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      width: 18px;
+      height: 18px;
+      color: #94a3b8;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+
+    .courses-count {
+      color: #64748b;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .courses-panel {
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 18px;
+    }
+
+    .courses-empty {
+      grid-column: 1 / -1;
+      display: grid;
+      justify-items: center;
+      padding: 48px 24px;
+      border: 1px dashed rgba(15, 23, 42, 0.12);
+      border-radius: 16px;
+      background: #f8fafc;
+      color: #64748b;
+      text-align: center;
+    }
+
+    .courses-empty strong {
+      color: #111827;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .courses-empty p {
+      margin-top: 7px;
+      max-width: 380px;
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    @media (max-width: 900px) {
+      .courses-hero {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .courses-shell {
+        width: min(100% - 28px, 1180px);
+      }
+
+      .courses-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+      }
+    }
+  </style>
+`;
+
+const EmptyState = (title, message) => `
+  <div class="courses-empty">
+    <strong>${title}</strong>
+    <p>${message}</p>
+  </div>
+`;
+
 export const CoursesPage = () => {
-    return `
-    <div class="min-h-screen py-16">
-      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <!-- Header Section -->
-        <div class="text-center mb-16 animate-fadeInUp">
-          <h1 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-            Explore Our 
-            <span class="bg-gradient-to-r from-primary-600 via-secondary-600 to-accent-600 bg-clip-text text-transparent">
-              Courses
-            </span>
-          </h1>
-          <p class="mt-6 text-xl text-gray-600 max-w-3xl mx-auto">
-            Discover a world of knowledge with our carefully curated collection of courses taught by expert teachers from the community.
-          </p>
-        </div>
-
-        <!-- Search and Filter Section -->
-        <div class="mb-12 animate-fadeInUp" style="animation-delay: 0.1s;">
-          <div class="card-modern max-w-2xl mx-auto">
-            <div class="flex items-center space-x-4">
-              <div class="flex-1 relative">
-                <input type="text" placeholder="Search courses..." 
-                       class="input-modern w-full pl-10" 
-                       id="course-search">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                  </svg>
-                </div>
-              </div>
-              <button class="btn-primary px-6 py-3 rounded-xl">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
-                </svg>
-                Filter
-              </button>
-            </div>
+  return `
+    ${CoursesStyles()}
+    <div class="courses-page">
+      <section class="courses-shell">
+        <div class="courses-hero">
+          <div class="courses-hero-main">
+            <p class="courses-eyebrow">Course Catalog</p>
+            <h1 class="courses-title">Explore courses designed for focused digital learning.</h1>
+            <p class="courses-subtitle">Find teacher-created video courses, enroll in the classes that fit your goals, and continue learning from your dashboard.</p>
           </div>
-        </div>
-
-        <!-- Courses Grid -->
-        <section aria-labelledby="courses-heading" class="animate-fadeInUp" style="animation-delay: 0.2s;">
-          <h2 id="courses-heading" class="sr-only">Courses</h2>
-          <div id="courses-list" class="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            <div class="col-span-full flex items-center justify-center py-12">
-              <div class="text-center">
-                <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-primary-500 to-secondary-500 rounded-2xl flex items-center justify-center animate-pulse">
-                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v11.494m-5.747-5.747h11.494"></path>
-                  </svg>
-                </div>
-                <p class="text-gray-500 text-lg loading-dots">Loading courses</p>
+          <aside class="courses-hero-side">
+            <p class="courses-side-label">Catalog</p>
+            <div class="courses-side-grid">
+              <div class="courses-side-stat">
+                <strong id="catalog-course-count">0</strong>
+                <span>Courses</span>
+              </div>
+              <div class="courses-side-stat">
+                <strong>Free</strong>
+                <span>Access</span>
               </div>
             </div>
+          </aside>
+        </div>
+
+        <div class="courses-toolbar">
+          <div class="courses-search">
+            <input type="search" placeholder="Search courses or teachers..." id="course-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" stroke-width="2"></circle>
+              <path d="M16.65 16.65L21 21" stroke-width="2" stroke-linecap="round"></path>
+            </svg>
+          </div>
+          <span class="courses-count" id="catalog-result-count">Loading courses...</span>
+        </div>
+
+        <section class="courses-panel" aria-labelledby="courses-heading">
+          <h2 id="courses-heading" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Courses</h2>
+          <div id="courses-list" class="courses-grid">
+            ${EmptyState('Loading courses...', 'Preparing the course catalog.')}
           </div>
         </section>
-      </div>
+      </section>
     </div>
   `;
 };
 
 export const initCoursesPage = async () => {
-    const courseListContainer = document.querySelector('#courses-list');
-    if (!courseListContainer) return;
+  const courseListContainer = document.querySelector('#courses-list');
+  const searchInput = document.querySelector('#course-search');
+  const resultCount = document.querySelector('#catalog-result-count');
+  const courseCount = document.querySelector('#catalog-course-count');
+  if (!courseListContainer) return;
 
-    try {
-        const response = await apiClient.get('/courses');
-        const courses = response.data;
-        
-        if (courses.length > 0) {
-            courseListContainer.innerHTML = courses.map(course => CourseCard(course)).join('');
-        } else {
-            courseListContainer.innerHTML = `<p class="text-gray-500 col-span-full">No courses are available at the moment. Please check back later.</p>`;
-        }
-    } catch (error) {
-        console.error('Failed to fetch courses:', error);
-        courseListContainer.innerHTML = `<p class="text-red-500 col-span-full">Could not load courses. Please try again later.</p>`;
+  const renderCourses = (courses) => {
+    if (resultCount) resultCount.textContent = `${courses.length} ${courses.length === 1 ? 'course' : 'courses'} shown`;
+
+    if (courses.length > 0) {
+      courseListContainer.innerHTML = courses.map(course => CourseCard(course)).join('');
+    } else {
+      courseListContainer.innerHTML = EmptyState('No courses found', 'Try a different search term or check back later.');
     }
-};
+  };
 
+  try {
+    const response = await apiClient.get('/courses');
+    const courses = Array.isArray(response.data) ? response.data : [];
+    if (courseCount) courseCount.textContent = courses.length;
+
+    renderCourses(courses);
+
+    searchInput?.addEventListener('input', (event) => {
+      const query = event.target.value.trim().toLowerCase();
+      if (!query) {
+        renderCourses(courses);
+        return;
+      }
+
+      const filtered = courses.filter((course) => {
+        const title = course?.title?.toLowerCase() || '';
+        const teacher = course?.teacher?.name?.toLowerCase() || '';
+        return title.includes(query) || teacher.includes(query);
+      });
+      renderCourses(filtered);
+    });
+  } catch (error) {
+    console.error('Failed to fetch courses:', error);
+    if (resultCount) resultCount.textContent = 'Unable to load catalog';
+    courseListContainer.innerHTML = EmptyState('Could not load courses', 'Please refresh the page or try again later.');
+  }
+};

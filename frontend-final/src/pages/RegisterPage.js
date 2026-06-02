@@ -1,123 +1,371 @@
 import { handleRegister } from '../auth.js';
 
+const AuthStyles = () => `
+  <style>
+    .auth-shell {
+      min-height: calc(100vh - 82px);
+      display: grid;
+      place-items: center;
+      padding: 48px 20px;
+      background:
+        radial-gradient(circle at 10% 12%, rgba(64, 97, 161, 0.12), transparent 26%),
+        radial-gradient(circle at 88% 20%, rgba(214, 139, 26, 0.10), transparent 24%),
+        linear-gradient(180deg, #f8fafc 0%, #ffffff 56%, #f6f7fb 100%);
+    }
+
+    .auth-panel {
+      width: min(980px, 100%);
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(360px, 0.72fr);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 26px;
+      background: #ffffff;
+      overflow: hidden;
+      box-shadow: 0 34px 90px rgba(15, 23, 42, 0.13);
+    }
+
+    .auth-intro {
+      position: relative;
+      padding: 42px;
+      background: #172033;
+      color: #ffffff;
+      overflow: hidden;
+    }
+
+    .auth-intro::after {
+      content: '';
+      position: absolute;
+      right: -70px;
+      bottom: -80px;
+      width: 240px;
+      height: 240px;
+      border-radius: 999px;
+      background: rgba(214, 139, 26, 0.18);
+    }
+
+    .auth-brand-mark {
+      display: grid;
+      place-items: center;
+      width: 52px;
+      height: 52px;
+      border-radius: 16px;
+      background: #4061a1;
+      color: #ffffff;
+      box-shadow: 0 18px 40px rgba(64, 97, 161, 0.24);
+    }
+
+    .auth-brand-mark svg {
+      width: 26px;
+      height: 26px;
+    }
+
+    .auth-eyebrow {
+      margin-top: 30px;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .auth-intro h1 {
+      margin-top: 14px;
+      max-width: 420px;
+      color: #ffffff;
+      font-size: clamp(32px, 4vw, 48px);
+      line-height: 1.05;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .auth-intro p {
+      margin-top: 18px;
+      max-width: 450px;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 15px;
+      line-height: 1.75;
+    }
+
+    .auth-points {
+      position: relative;
+      display: grid;
+      gap: 12px;
+      margin-top: 34px;
+      z-index: 1;
+    }
+
+    .auth-point {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.07);
+      padding: 13px 14px;
+      color: rgba(255, 255, 255, 0.84);
+      font-size: 13px;
+      font-weight: 750;
+    }
+
+    .auth-point span {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: #d68b1a;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .auth-card {
+      padding: 42px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .auth-card h2 {
+      color: #111827;
+      font-size: 30px;
+      line-height: 1.15;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .auth-subtitle {
+      margin-top: 9px;
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.65;
+      font-weight: 650;
+    }
+
+    .auth-form {
+      display: grid;
+      gap: 18px;
+      margin-top: 30px;
+    }
+
+    .auth-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .auth-label {
+      color: #334155;
+      font-size: 13px;
+      font-weight: 850;
+    }
+
+    .auth-input-wrap {
+      position: relative;
+    }
+
+    .auth-input {
+      width: 100%;
+      min-height: 50px;
+      border: 1px solid #dbe3ef;
+      border-radius: 14px;
+      background: #f8fafc;
+      padding: 0 44px 0 14px;
+      color: #111827;
+      font-size: 14px;
+      font-weight: 650;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .auth-input:focus {
+      border-color: rgba(64, 97, 161, 0.55);
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(64, 97, 161, 0.10);
+    }
+
+    .auth-input-icon {
+      position: absolute;
+      inset: 0 14px 0 auto;
+      display: grid;
+      place-items: center;
+      color: #94a3b8;
+      pointer-events: none;
+    }
+
+    .auth-input-icon svg {
+      width: 19px;
+      height: 19px;
+    }
+
+    .auth-submit {
+      min-height: 52px;
+      border: 0;
+      border-radius: 14px;
+      background: #4061a1;
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 18px 36px rgba(64, 97, 161, 0.22);
+      transition: transform 0.2s ease, background 0.2s ease, opacity 0.2s ease;
+    }
+
+    .auth-submit:hover {
+      background: #334b84;
+      transform: translateY(-1px);
+    }
+
+    .auth-submit:disabled {
+      opacity: 0.72;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .auth-switch {
+      margin-top: 24px;
+      border-top: 1px solid #eef2f7;
+      padding-top: 20px;
+      color: #64748b;
+      font-size: 14px;
+      line-height: 1.6;
+      font-weight: 650;
+      text-align: center;
+    }
+
+    .auth-switch a {
+      color: #4061a1;
+      font-weight: 900;
+      text-decoration: none;
+    }
+
+    .auth-switch a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 860px) {
+      .auth-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .auth-intro {
+        padding: 32px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .auth-shell {
+        padding: 28px 14px;
+      }
+
+      .auth-intro,
+      .auth-card {
+        padding: 26px 20px;
+      }
+    }
+  </style>
+`;
+
+const BookIcon = () => `
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19.5A2.5 2.5 0 016.5 17H20V5H6.5A2.5 2.5 0 004 7.5v12zm0-12.5l8 4.5 8-4.5" />
+  </svg>
+`;
+
 export const RegisterPage = () => {
   return `
-    <div class="min-h-screen flex items-center justify-center px-6 py-12 lg:px-8 relative">
-      <!-- Background Elements -->
-      <div class="absolute inset-0 -z-10">
-        <div class="absolute top-0 right-1/4 w-96 h-96 bg-secondary-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float"></div>
-        <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-accent-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-float" style="animation-delay: 2s;"></div>
-      </div>
+    ${AuthStyles()}
+    <section class="auth-shell">
+      <div class="auth-panel">
+        <aside class="auth-intro">
+          <div class="auth-brand-mark">${BookIcon()}</div>
+          <p class="auth-eyebrow">Student account</p>
+          <h1>Start learning with a focused digital classroom.</h1>
+          <p>Create a student account to enroll in courses, access video lessons, and build your learning path on Shiksha Jyoti.</p>
+          <div class="auth-points">
+            <div class="auth-point"><span>1</span> Free access to available courses</div>
+            <div class="auth-point"><span>2</span> Enroll and learn at your own pace</div>
+            <div class="auth-point"><span>3</span> Return to your dashboard anytime</div>
+          </div>
+        </aside>
 
-      <div class="w-full max-w-md">
-        <div class="card-modern animate-fadeInUp">
-          <div class="text-center mb-8">
-            <div class="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-secondary-500 to-accent-500 rounded-2xl flex items-center justify-center">
-              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
-              </svg>
-            </div>
-            <h2 class="text-3xl font-bold text-gray-900">Join Shiksha Jyoti</h2>
-            <p class="mt-2 text-gray-600">Start your educational journey today</p>
+        <div class="auth-card">
+          <div>
+            <h2>Create account</h2>
+            <p class="auth-subtitle">Students can register directly. Teacher accounts are created by an admin.</p>
           </div>
 
-          <form id="register-form" class="space-y-6">
-            <div class="space-y-4">
-              <div>
-                <label for="name" class="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
-                <div class="relative">
-                  <input id="name" name="name" type="text" required 
-                         class="input-modern w-full" 
-                         placeholder="Enter your full name">
-                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label for="email" class="block text-sm font-semibold text-gray-700 mb-2">Email address</label>
-                <div class="relative">
-                  <input id="email" name="email" type="email" autocomplete="email" required 
-                         class="input-modern w-full" 
-                         placeholder="Enter your email">
-                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label for="password" class="block text-sm font-semibold text-gray-700 mb-2">Password</label>
-                <div class="relative">
-                  <input id="password" name="password" type="password" autocomplete="new-password" required 
-                         class="input-modern w-full" 
-                         placeholder="Create a password">
-                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <label for="role" class="block text-sm font-semibold text-gray-700 mb-2">I am a</label>
-                <div class="relative">
-                  <select id="role" name="role" required 
-                          class="input-modern w-full appearance-none">
-                    <option value="student">Student</option>
-                    <option value="teacher">Teacher</option>
-                  </select>
-                  <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <button type="submit" class="btn-primary w-full text-lg py-4 rounded-xl hover-lift shadow-glow">
-                <span class="flex items-center justify-center gap-2">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+          <form id="register-form" class="auth-form">
+            <div class="auth-field">
+              <label for="name" class="auth-label">Full name</label>
+              <div class="auth-input-wrap">
+                <input id="name" name="name" type="text" autocomplete="name" required class="auth-input" placeholder="Your full name">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM5 21a7 7 0 0114 0"></path>
                   </svg>
-                  Create Account
                 </span>
-              </button>
+              </div>
             </div>
+
+            <div class="auth-field">
+              <label for="email" class="auth-label">Email address</label>
+              <div class="auth-input-wrap">
+                <input id="email" name="email" type="email" autocomplete="email" required class="auth-input" placeholder="you@example.com">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16v12H4zM4 7l8 6 8-6"></path>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <div class="auth-field">
+              <label for="password" class="auth-label">Password</label>
+              <div class="auth-input-wrap">
+                <input id="password" name="password" type="password" autocomplete="new-password" required class="auth-input" placeholder="Create a password">
+                <span class="auth-input-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11V8a5 5 0 0110 0v3M6 11h12v9H6z"></path>
+                  </svg>
+                </span>
+              </div>
+            </div>
+
+            <input type="hidden" name="role" value="student">
+            <button type="submit" class="auth-submit">Create student account</button>
           </form>
 
-          <div class="mt-8 text-center">
-            <p class="text-gray-600">
-              Already have an account?
-              <a href="/login" data-link class="font-semibold text-primary-600 hover:text-primary-700 transition-colors duration-300">
-                Sign in
-              </a>
-            </p>
-          </div>
+          <p class="auth-switch">
+            Already registered?
+            <a href="/login" data-link>Sign in</a>
+          </p>
         </div>
       </div>
-    </div>
+    </section>
   `;
 };
 
 export const initRegisterPage = () => {
     const form = document.querySelector('#register-form');
+    const button = form.querySelector('button[type="submit"]');
+    const originalButtonText = button.textContent;
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        button.disabled = true;
+        button.textContent = 'Creating account...';
+
         const formData = new FormData(form);
         const name = formData.get('name');
         const email = formData.get('email');
         const password = formData.get('password');
-        const role = formData.get('role');
-        await handleRegister(name, email, password, role);
+
+        try {
+            await handleRegister(name, email, password);
+        } finally {
+            button.disabled = false;
+            button.textContent = originalButtonText;
+        }
     });
 };
-

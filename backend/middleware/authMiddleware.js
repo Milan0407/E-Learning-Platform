@@ -2,10 +2,13 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const protect = async (req, res, next) => {
-    let token;
+    let token = req.header('x-auth-token');
 
-    if (req.header('x-auth-token')) {
-        token = req.header('x-auth-token');
+    if (!token) {
+        const authHeader = req.header('authorization');
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+            token = authHeader.split(' ')[1];
+        }
     }
 
     if (!token) {
@@ -17,6 +20,7 @@ const protect = async (req, res, next) => {
         req.user = decoded.user;
         next();
     } catch (err) {
+        console.error('Token verification error:', err.message);
         res.status(401).json({ msg: 'Token is not valid' });
     }
 };

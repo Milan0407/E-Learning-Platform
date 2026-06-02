@@ -10,6 +10,24 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
+const removeTempFile = (filePath) => {
+    if (filePath && fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+    }
+};
+
+const normalizeCourseTeacher = (course) => {
+    if (!course) return course;
+    return {
+        ...course,
+        teacher: course.teacher || {
+            _id: null,
+            name: 'Unknown Teacher',
+            missing: true
+        }
+    };
+};
+
 // --- THIS IS THE CORRECTED FUNCTION ---
 const addLessonToCourse = async (req, res) => {
     // Check if a file was actually uploaded by multer
@@ -20,17 +38,27 @@ const addLessonToCourse = async (req, res) => {
     const { title } = req.body;
     const filePath = req.file.path; // The path to the temporary file
 
+    if (!title || !title.trim()) {
+        removeTempFile(filePath);
+        return res.status(400).json({ msg: 'Lesson title is required.' });
+    }
+
     try {
         const course = await Course.findById(req.params.courseId);
         if (!course) {
-            fs.unlinkSync(filePath); // Clean up the temporary file
+            removeTempFile(filePath); // Clean up the temporary file
             return res.status(404).json({ msg: 'Course not found' });
+        }
+
+        if (!course.teacher) {
+            removeTempFile(filePath);
+            return res.status(400).json({ msg: 'This course has no assigned teacher. Please recreate or reassign the course.' });
         }
 
         // Ensure the person uploading is the teacher of the course
         if (course.teacher.toString() !== req.user.id) {
-            fs.unlinkSync(filePath); // Clean up
-            return res.status(401).json({ msg: 'User not authorized' });
+            removeTempFile(filePath); // Clean up
+            return res.status(403).json({ msg: 'Only the course owner can upload lessons to this course.' });
         }
         
         // Upload the file from the temporary path to Cloudinary
@@ -40,7 +68,7 @@ const addLessonToCourse = async (req, res) => {
         });
         
         // The upload is done, so we can delete the temporary file
-        fs.unlinkSync(filePath);
+        removeTempFile(filePath);
 
         const newLesson = {
             title,
@@ -56,9 +84,9 @@ const addLessonToCourse = async (req, res) => {
 
     } catch (err) {
         // If anything fails, delete the temporary file and send a detailed error
-        fs.unlinkSync(filePath);
+        removeTempFile(filePath);
         console.error("Cloudinary Upload Error:", err.message);
-        res.status(500).send('Server Error during file processing.');
+        res.status(500).json({ msg: 'Server Error during file processing.', error: err.message });
     }
 };
 
@@ -79,8 +107,8 @@ const createCourse = async (req, res) => {
 
 const getAllCourses = async (req, res) => {
     try {
-        const courses = await Course.find().populate('teacher', 'name').sort({ createdAt: -1 });
-        res.json(courses);
+        const courses = await Course.find().populate('teacher', 'name').sort({ createdAt: -1 }).lean();
+        res.json(courses.map(normalizeCourseTeacher));
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -89,11 +117,11 @@ const getAllCourses = async (req, res) => {
 
 const getCourseById = async (req, res) => {
     try {
-        const course = await Course.findById(req.params.id).populate('teacher', 'name');
+        const course = await Course.findById(req.params.id).populate('teacher', 'name').lean();
         if (!course) {
             return res.status(404).json({ msg: 'Course not found' });
         }
-        res.json(course);
+        res.json(normalizeCourseTeacher(course));
     } catch (err) {
         console.error(err.message);
         if (err.kind === 'ObjectId') {
