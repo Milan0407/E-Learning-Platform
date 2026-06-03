@@ -599,11 +599,39 @@ export const TeacherDashboardPage = () => {
             <h2 class="teacher-form-title">Create a new course</h2>
             <p class="teacher-form-help">Start with a clear title and description. You can add video lessons after the course is created.</p>
             <form id="create-course-form" class="teacher-create-form">
-              <input id="title" name="title" type="text" required class="teacher-input" placeholder="Course title">
-              <textarea id="description" name="description" rows="4" required class="teacher-input" placeholder="Short course description"></textarea>
-              <button type="submit" class="teacher-submit">Create course</button>
-              <p id="create-course-status" class="teacher-status"></p>
-            </form>
+  <input
+    id="title"
+    name="title"
+    type="text"
+    required
+    class="teacher-input"
+    placeholder="Course title"
+  >
+
+  <textarea
+    id="description"
+    name="description"
+    rows="4"
+    required
+    class="teacher-input"
+    placeholder="Short course description"
+  ></textarea>
+
+  <select id="category" name="category" class="teacher-input">
+    <option value="Programming">Programming</option>
+    <option value="Cybersecurity">Cybersecurity</option>
+    <option value="AI">AI</option>
+    <option value="Data Science">Data Science</option>
+    <option value="Mathematics">Mathematics</option>
+    <option value="General">General</option>
+  </select>
+
+  <button type="submit" class="teacher-submit">
+    Create course
+  </button>
+
+  <p id="create-course-status" class="teacher-status"></p>
+</form>
           </aside>
         </div>
       </section>
@@ -657,13 +685,18 @@ export const initTeacherDashboardPage = async () => {
     const formData = new FormData(createCourseForm);
     const title = formData.get('title');
     const description = formData.get('description');
+    const category = formData.get('category');
     const button = createCourseForm.querySelector('button');
 
     try {
       button.disabled = true;
       status.style.color = '#4061a1';
       status.textContent = 'Creating course...';
-      await apiClient.post('/courses', { title, description });
+      await apiClient.post('/courses', {
+  title,
+  description,
+  category
+});
       createCourseForm.reset();
       status.textContent = 'Course created.';
       await fetchAndRenderCourses();

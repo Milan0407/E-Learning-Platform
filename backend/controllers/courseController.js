@@ -89,7 +89,11 @@ const addLessonToCourse = async (req, res) => {
     thumbnailUrl
 };
 
-        course.lessons.push(newLesson);
+if (!course.courseThumbnail) {
+    course.courseThumbnail = thumbnailUrl;
+}
+
+course.lessons.push(newLesson);
         await course.save(); // Save the updated course to the database
 
         // Send the complete, updated course back to the frontend
@@ -107,9 +111,14 @@ const addLessonToCourse = async (req, res) => {
 // --- OTHER FUNCTIONS IN THE FILE (ensure they are present) ---
 
 const createCourse = async (req, res) => {
-    const { title, description } = req.body;
+    const { title, description, category } = req.body;
     try {
-        const newCourse = new Course({ title, description, teacher: req.user.id });
+        const newCourse = new Course({
+    title,
+    description,
+    category: category || 'General',
+    teacher: req.user.id
+});
         const course = await newCourse.save();
         res.json(course);
     } catch (err) {

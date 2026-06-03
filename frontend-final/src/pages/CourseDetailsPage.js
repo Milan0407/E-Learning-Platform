@@ -181,24 +181,51 @@ const CourseDetailsStyles = () => `
     }
 
     .lesson-item {
-      width: 100%;
-      min-height: 48px;
-      border: 1px solid #dbe3ef;
-      border-radius: 13px;
-      background: #f8fafc;
-      color: #334155;
-      padding: 12px 13px;
-      text-align: left;
-      font-size: 14px;
-      font-weight: 850;
-      cursor: pointer;
-    }
+  width: 100%;
+  border: 1px solid #dbe3ef;
+  border-radius: 13px;
+  background: #f8fafc;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
 
-    .lesson-item:hover {
-      border-color: rgba(64, 97, 161, 0.34);
-      background: #f4f6fb;
-      color: #4061a1;
-    }
+.lesson-item:hover {
+  border-color: rgba(64, 97, 161, 0.34);
+  background: #f4f6fb;
+}
+
+.lesson-thumbnail {
+  width: 90px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.lesson-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.lesson-number {
+  color: #4061a1;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.lesson-title {
+  color: #111827;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.3;
+}
 
     .course-state {
       display: grid;
@@ -329,10 +356,28 @@ export const initCourseDetailsPage = async () => {
 
         if (course.lessons && course.lessons.length > 0) {
           lessonsListContainer.innerHTML = course.lessons.map((lesson, index) => `
-            <button class="lesson-item" data-video-url="${escapeHtml(lesson.videoUrl)}">
-              ${index + 1}. ${escapeHtml(lesson.title)}
-            </button>
-          `).join('');
+  <button
+    class="lesson-item"
+    data-video-url="${escapeHtml(lesson.videoUrl)}"
+  >
+    ${
+      lesson.thumbnailUrl
+        ? `
+          <img
+            src="${escapeHtml(lesson.thumbnailUrl)}"
+            alt="${escapeHtml(lesson.title)}"
+            class="lesson-thumbnail"
+          />
+        `
+        : ''
+    }
+
+    <div class="lesson-info">
+      <span class="lesson-number">${index + 1}</span>
+      <span class="lesson-title">${escapeHtml(lesson.title)}</span>
+    </div>
+  </button>
+`).join('');
 
           videoPlayerContainer.innerHTML = VideoPlayer(course.lessons[0].videoUrl);
           lessonsListContainer.addEventListener('click', (e) => {

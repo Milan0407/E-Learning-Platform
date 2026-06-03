@@ -229,6 +229,21 @@ const CourseCardStyles = () => `
 .course-card-cover.has-thumbnail::after {
   display: none;
 }
+
+.course-card-category {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(64, 97, 161, 0.10);
+  color: #4061a1;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
   </style>
 `;
 
@@ -253,17 +268,18 @@ export const CourseCard = (course) => {
   const courseTitle = escapeHtml(course?.title || 'Untitled Course');
   const teacherInitial = getInitial(course?.teacher?.name || 'Teacher');
   const lessonLabel = lessonCount === 1 ? '1 lesson' : `${lessonCount} lessons`;
+  const category = escapeHtml(course?.category || 'General');
   ensureCourseCardStyles();
 
   return `
     <a href="/courses/${courseId}" data-link class="course-card-link">
       <article class="course-card">
-        <div class="course-card-cover ${course?.lessons?.[0]?.thumbnailUrl ? 'has-thumbnail' : ''}">
+       <div class="course-card-cover ${course?.courseThumbnail ? 'has-thumbnail' : ''}">
   ${
-    course?.lessons?.[0]?.thumbnailUrl
+    course?.courseThumbnail
       ? `
         <img
-          src="${course.lessons[0].thumbnailUrl}"
+          src="${course.courseThumbnail}"
           alt="${courseTitle}"
           class="course-card-thumbnail"
         />
@@ -282,6 +298,7 @@ export const CourseCard = (course) => {
 </div>
 
         <div class="course-card-body">
+          <div class="course-card-category">${category}</div>
           <h3 class="course-card-title">${courseTitle}</h3>
 
           <div class="course-card-teacher">

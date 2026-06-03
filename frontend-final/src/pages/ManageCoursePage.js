@@ -51,6 +51,26 @@ const ManageStyles = () => `
       box-shadow: 0 18px 48px rgba(15, 23, 42, 0.08);
     }
 
+    .manage-course-banner {
+  width: 100%;
+height: 300px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  background: #f1f5f9;
+}
+
+
+.manage-course-banner img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.manage-course-banner {
+  background: #111827;
+}
     .manage-hero-side {
       border-radius: 20px;
       background: linear-gradient(135deg, #4061a1 0%, #334b84 100%);
@@ -79,9 +99,10 @@ const ManageStyles = () => `
     .manage-title {
       margin-top: 8px;
       color: #111827;
-      font-size: clamp(30px, 3.6vw, 10px);
-      line-height: 1.1;
-      font-weight: 900;
+      font-size: clamp(24px, 2.2vw, 36px);
+  font-weight: 900;
+  line-height: 1.2;
+
       letter-spacing: 0;
     }
 
@@ -293,6 +314,40 @@ const ManageStyles = () => `
       text-align: center;
     }
 
+    .manage-lesson-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.manage-lesson-thumbnail {
+  width: 120px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 10px;
+  flex-shrink: 0;
+  border: 1px solid #dbe3ef;
+}
+
+.manage-lesson-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.manage-lesson-title {
+  color: #111827;
+  font-size: 15px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+
+.manage-lesson-meta {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
     @media (max-width: 980px) {
       .manage-hero,
       .manage-workspace {
@@ -414,10 +469,31 @@ export const initManageCoursePage = async () => {
       courseDetailsContainer.innerHTML = `
         <div class="manage-hero">
           <div class="manage-hero-main">
-            <p class="manage-eyebrow">Course Manager</p>
-            <h1 class="manage-title">${escapeHtml(course?.title || 'Untitled Course')}</h1>
-            <p class="manage-copy">${escapeHtml(course?.description || '')}</p>
-          </div>
+
+${
+  course?.courseThumbnail
+    ? `
+      <div class="manage-course-banner">
+        <img
+          src="${escapeHtml(course.courseThumbnail)}"
+          alt="${escapeHtml(course.title || 'Course Thumbnail')}"
+        />
+      </div>
+    `
+    : ''
+}
+
+  <p class="manage-eyebrow">Course Manager</p>
+
+  <h1 class="manage-title">
+    ${escapeHtml(course?.title || 'Untitled Course')}
+  </h1>
+
+  <p class="manage-copy">
+    ${escapeHtml(course?.description || '')}
+  </p>
+
+</div>
           <aside class="manage-hero-side">
             <p class="manage-side-label">Lessons</p>
             <div class="manage-side-stat">
@@ -429,15 +505,46 @@ export const initManageCoursePage = async () => {
       `;
 
       if (course.lessons && course.lessons.length > 0) {
-        lessonsList.innerHTML = course.lessons.map(lesson => `
-          <div class="lesson-item-teacher" data-video-url="${escapeHtml(lesson.videoUrl)}">
-            <div class="manage-lesson-row">
-              <p class="manage-lesson-title">${escapeHtml(lesson.title)}</p>
-              <button class="preview-video-btn" type="button">Preview video</button>
-            </div>
-            <div class="video-preview-container hidden"></div>
+        lessonsList.innerHTML = course.lessons.map((lesson, index) => `
+  <div class="lesson-item-teacher" data-video-url="${escapeHtml(lesson.videoUrl)}">
+
+    <div class="manage-lesson-row">
+
+      <div class="manage-lesson-content">
+
+        ${
+          lesson.thumbnailUrl
+            ? `
+              <img
+                src="${escapeHtml(lesson.thumbnailUrl)}"
+                alt="${escapeHtml(lesson.title)}"
+                class="manage-lesson-thumbnail"
+              />
+            `
+            : ''
+        }
+
+        <div class="manage-lesson-details">
+          <p class="manage-lesson-title">
+            ${escapeHtml(lesson.title)}
+          </p>
+
+          <div class="manage-lesson-meta">
+            Lesson ${index + 1}
           </div>
-        `).join('');
+        </div>
+
+      </div>
+
+      <button class="preview-video-btn" type="button">
+        Preview video
+      </button>
+
+    </div>
+
+    <div class="video-preview-container hidden"></div>
+  </div>
+`).join('');
       } else {
         lessonsList.innerHTML = `<div class="manage-empty">No lessons have been uploaded for this course yet.</div>`;
       }
