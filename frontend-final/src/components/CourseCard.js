@@ -211,6 +211,24 @@ const CourseCardStyles = () => `
     .course-card-link:hover .course-card-action svg {
       transform: translateX(3px);
     }
+  .course-card-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  position: absolute;
+  inset: 0;
+}
+
+.course-card-cover {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+  .course-card-cover.has-thumbnail::before,
+.course-card-cover.has-thumbnail::after {
+  display: none;
+}
   </style>
 `;
 
@@ -240,14 +258,28 @@ export const CourseCard = (course) => {
   return `
     <a href="/courses/${courseId}" data-link class="course-card-link">
       <article class="course-card">
-        <div class="course-card-cover" aria-hidden="true">
-          <div class="course-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19.5A2.5 2.5 0 016.5 17H20V5H6.5A2.5 2.5 0 004 7.5v12zm0-12.5l8 4.5 8-4.5" />
-            </svg>
-          </div>
-          <span class="course-card-badge">${lessonLabel}</span>
+        <div class="course-card-cover ${course?.lessons?.[0]?.thumbnailUrl ? 'has-thumbnail' : ''}">
+  ${
+    course?.lessons?.[0]?.thumbnailUrl
+      ? `
+        <img
+          src="${course.lessons[0].thumbnailUrl}"
+          alt="${courseTitle}"
+          class="course-card-thumbnail"
+        />
+      `
+      : `
+        <div class="course-card-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M4 19.5A2.5 2.5 0 016.5 17H20V5H6.5A2.5 2.5 0 004 7.5v12zm0-12.5l8 4.5 8-4.5" />
+          </svg>
         </div>
+      `
+  }
+
+  <span class="course-card-badge">${lessonLabel}</span>
+</div>
 
         <div class="course-card-body">
           <h3 class="course-card-title">${courseTitle}</h3>

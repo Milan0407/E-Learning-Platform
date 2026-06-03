@@ -66,15 +66,28 @@ const addLessonToCourse = async (req, res) => {
             resource_type: 'video',
             folder: `gyansetu/courses/${course._id}`
         });
+
+        const thumbnailUrl = cloudinary.url(
+    result.public_id,
+    {
+        resource_type: 'video',
+        format: 'jpg',
+        transformation: [
+            { width: 640, crop: 'scale' },
+            { start_offset: '2' }
+        ]
+    }
+);
         
         // The upload is done, so we can delete the temporary file
         removeTempFile(filePath);
 
         const newLesson = {
-            title,
-            videoUrl: result.secure_url,
-            publicId: result.public_id
-        };
+    title,
+    videoUrl: result.secure_url,
+    publicId: result.public_id,
+    thumbnailUrl
+};
 
         course.lessons.push(newLesson);
         await course.save(); // Save the updated course to the database
