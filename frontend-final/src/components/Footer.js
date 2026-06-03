@@ -1,7 +1,7 @@
 const FooterStyles = () => `
   <style>
     .site-footer {
-      margin-top: 80px;
+      margin-top: 0;
       border-top: 1px solid rgba(15, 23, 42, 0.08);
       background:
         radial-gradient(circle at 8% 10%, rgba(64, 97, 161, 0.10), transparent 24%),
@@ -159,35 +159,108 @@ const FooterStyles = () => `
     }
 
     @media (max-width: 920px) {
-      .footer-main {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+      .footer-main{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:24px;
+}
 
-      .footer-brand {
-        grid-column: 1 / -1;
-      }
+    
     }
 
-    @media (max-width: 640px) {
-      .site-footer {
-        margin-top: 56px;
-      }
+   @media (max-width:768px){
 
-      .footer-container {
-        width: min(100% - 28px, 1180px);
-        padding-top: 42px;
-      }
+  .site-footer{
+      margin-top:10px;
+  }
 
-      .footer-main {
-        grid-template-columns: 1fr;
-        gap: 28px;
-      }
+  .footer-container{
+      width:calc(100% - 24px);
+      padding:28px 0 20px;
+  }
 
-      .footer-note {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-    }
+  /* Brand Section */
+
+.footer-brand{
+    grid-column:1 / -1;
+    text-align:left;
+    max-width:none;
+    margin:0;
+}
+
+.footer-logo{
+    justify-content:flex-start;
+}
+
+.footer-status{
+    margin-top:18px;
+    margin-left:0;
+    margin-right:0;
+}
+
+  .footer-logo-text span{
+      display:none;
+  }
+
+  .footer-description{
+      max-width:420px;
+      
+      font-size:14px;
+      line-height:1.8;
+  }
+
+
+  /* Footer Grid */
+
+  .footer-main{
+      grid-template-columns:repeat(2,1fr);
+      gap:28px 20px;
+      align-items:start;
+  }
+
+  .footer-column{
+      width:100%;
+      text-align:left;
+  }
+
+  .footer-column h3{
+      font-size:13px;
+      margin-bottom:10px;
+  }
+
+  .footer-links{
+      gap:10px;
+      margin-top:10px;
+  }
+
+  .footer-links a{
+      font-size:13px;
+  }
+
+  /* Support stays left aligned */
+
+  .footer-column:last-child{
+      grid-column:auto;
+      text-align:left;
+      width:100%;
+  }
+
+  /* Bottom Area */
+
+  .footer-note{
+      margin-top:28px;
+      padding-top:18px;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+      gap:8px;
+  }
+
+  .footer-note-links{
+      justify-content:center;
+      gap:14px;
+  }
+}
+      
   </style>
 `;
 

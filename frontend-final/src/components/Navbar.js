@@ -2,6 +2,20 @@ import { getUser } from '../auth';
 
 const NavbarStyles = () => `
     <style>
+    .mobile-menu-btn{
+    display:none;
+    width:42px;
+    height:42px;
+    border:none;
+    background:#f4f6fb;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:22px;
+    font-weight:900;
+    color:#4061a1;
+}
+
+
         .site-header {
             position: sticky;
             top: 0;
@@ -136,27 +150,54 @@ const NavbarStyles = () => `
             text-transform: uppercase;
         }
 
-        @media (max-width: 760px) {
-            .site-nav {
-                width: min(100% - 28px, 1180px);
-                min-height: auto;
-                padding: 14px 0;
-                align-items: flex-start;
-                flex-direction: column;
-            }
+       @media (max-width:768px){
 
-            .site-links {
-                width: 100%;
-                justify-content: flex-start;
-            }
+   .site-nav{
+    flex-wrap:wrap;
+    padding:12px 0;
+}
 
-            .site-link,
-            .site-logout {
-                min-height: 38px;
-                padding: 0 11px;
-                font-size: 13px;
-            }
-        }
+.mobile-menu-btn{
+    display:block;
+    margin-left:auto;
+}
+
+.site-links{
+    display:none;
+    width:100%;
+    flex-direction:column;
+    gap:8px;
+    margin-top:10px;
+    padding:8px;
+    background:#ffffff;
+    border:1px solid #e5e7eb;
+    border-radius:12px;
+}
+
+.site-links.active{
+    display:flex;
+}
+
+.site-link,
+.site-logout{
+    width:100%;
+    justify-content:flex-start;
+    padding:10px 14px;
+    border-radius:8px;
+}
+
+.site-role-pill{
+    align-self:flex-start;
+}
+
+   .site-brand-subtitle{
+        display:none;
+    }
+
+    .site-brand-name{
+        font-size:16px;
+    }
+}
     </style>
 `;
 
@@ -174,10 +215,10 @@ const Navbar = (user) => {
     const isLoggedIn = !!user;
 
     const publicLinks = `
+    ${Link('/register', 'Sign up', 'site-link-primary')}
+    ${Link('/login', 'Log in', 'site-link-muted')}
         ${Link('/courses', 'Courses')}
         ${Link('/contact', 'Contact')}
-        ${Link('/login', 'Log in', 'site-link-muted')}
-        ${Link('/register', 'Sign up', 'site-link-primary')}
     `;
 
     const studentLinks = `
@@ -212,33 +253,56 @@ const Navbar = (user) => {
         navLinks = studentLinks;
     }
 
-    return `
-        ${NavbarStyles()}
-        <header class="site-header">
-            <nav class="site-nav" aria-label="Global navigation">
-                <a href="/" data-link class="site-brand" aria-label="Shiksha Jyoti home">
-                    <span class="site-brand-mark">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19.5A2.5 2.5 0 016.5 17H20V5H6.5A2.5 2.5 0 004 7.5v12zm0-12.5l8 4.5 8-4.5" />
-                        </svg>
-                    </span>
-                    <span>
-                        <span class="site-brand-name">Shiksha Jyoti</span>
-                        <span class="site-brand-subtitle">Digital Education</span>
-                    </span>
-                </a>
-                <div class="site-links">
-                    ${navLinks}
-                </div>
-            </nav>
-        </header>
-    `;
+   return `
+    ${NavbarStyles()}
+    <header class="site-header">
+        <nav class="site-nav" aria-label="Global navigation">
+
+            <a href="/" data-link class="site-brand" aria-label="Shiksha Jyoti home">
+                <span class="site-brand-mark">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 19.5A2.5 2.5 0 016.5 17H20V5H6.5A2.5 2.5 0 004 7.5v12zm0-12.5l8 4.5 8-4.5" />
+                    </svg>
+                </span>
+
+                <span>
+                    <span class="site-brand-name">Shiksha Jyoti</span>
+                    <span class="site-brand-subtitle">Digital Education</span>
+                </span>
+            </a>
+
+            <button id="mobile-menu-btn" class="mobile-menu-btn" type="button">
+                ☰
+            </button>
+
+            <div id="mobile-menu" class="site-links">
+                ${navLinks}
+            </div>
+
+        </nav>
+    </header>
+`;
 };
 
 export const updateNavbar = async () => {
     const user = await getUser();
     const navbarContainer = document.querySelector('#navbar-container');
+
     if (navbarContainer) {
         navbarContainer.innerHTML = Navbar(user);
+
+        const menuBtn = document.querySelector('#mobile-menu-btn');
+        const mobileMenu = document.querySelector('#mobile-menu');
+
+        if (menuBtn && mobileMenu) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+
+                menuBtn.textContent =
+                    mobileMenu.classList.contains('active')
+                    ? '✕'
+                    : '☰';
+            });
+        }
     }
 };

@@ -648,32 +648,120 @@ const AdminStyles = () => `
             }
         }
 
-        @media (max-width: 720px) {
-            .admin-shell {
-                width: min(100% - 28px, 1180px);
-            }
+      @media (max-width: 720px) {
 
-            .admin-hero {
-                padding: 20px;
-            }
+    .admin-shell {
+        width: calc(100% - 20px);
+    }
 
-            .admin-stats {
-                grid-template-columns: 1fr;
-            }
+    .admin-hero {
+        padding: 18px;
+    }
 
-            .admin-panel-header {
-                display: block;
-            }
+    .admin-title {
+        font-size: 32px;
+        line-height: 1.15;
+    }
 
-            .admin-filter-button {
-                margin-top: 12px;
-            }
+    .admin-subtitle {
+        font-size: 14px;
+        line-height: 1.6;
+    }
 
-            .admin-table th,
-            .admin-table td {
-                padding: 12px 16px;
-            }
-        }
+    .admin-tabs {
+        width: 100%;
+    }
+
+    .admin-tab {
+        flex: 1;
+        min-width: auto;
+    }
+
+    /* Compact stats */
+
+    .admin-stats {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+    }
+
+    .admin-stat {
+        min-height: auto;
+        padding: 12px;
+    }
+
+    .admin-stat-value {
+        font-size: 24px;
+    }
+
+    .admin-stat-detail {
+        font-size: 11px;
+    }
+
+    /* Panels */
+
+    .admin-panel-header {
+        display: block;
+    }
+
+    .admin-filter-button {
+        margin-top: 12px;
+        width: 100%;
+    }
+
+    .admin-form-panel {
+        padding: 16px;
+    }
+
+    /* Mobile table */
+
+    .admin-table-wrap {
+        overflow-x: visible;
+    }
+
+    .admin-table {
+        min-width: 100%;
+    }
+
+    .admin-table th,
+    .admin-table td {
+        padding: 12px;
+    }
+
+    /* Actions */
+
+    .admin-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .admin-action {
+        width: 100%;
+    }
+
+    .admin-identity {
+        align-items: flex-start;
+    }
+
+    .admin-course-description {
+        max-width: 100%;
+    }
+
+    /* Create user form */
+
+    .admin-input {
+        font-size: 16px;
+    }
+
+    .admin-submit {
+        width: 100%;
+    }
+
+    /* Modal */
+
+    .admin-modal-card {
+        padding: 18px;
+    }
+}
     </style>
 `;
 
